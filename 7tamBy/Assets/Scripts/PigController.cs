@@ -57,8 +57,9 @@ public class PigController : MonoBehaviour
             }
         }
 
-        //foreach (Vector2 v in turnPoints) {
-        //    Instantiate(testSquare, new Vector3 (v.x,v.y,0),Quaternion.identity);
+        //foreach (Vector2 v in turnPoints)
+        //{
+        //    Instantiate(testSquare, new Vector3(v.x, v.y, 0), Quaternion.identity);
         //}
     }
 
@@ -86,13 +87,22 @@ public class PigController : MonoBehaviour
     {
         if (Mathf.Abs(joystickToControl.Horizontal) > Mathf.Abs(joystickToControl.Vertical))
         {
-            transform.Translate(new Vector2(joystickToControl.Horizontal * 0.1f, 0), Space.World);
+            //transform.Translate(new Vector2(joystickToControl.Horizontal * 0.1f, 0), Space.World);
+            if (joystickToControl.Horizontal > 0) {
+                transform.Translate(horizontalMovementDirection * 0.03f, Space.World);
+            }
+            else if (joystickToControl.Horizontal < 0) transform.Translate(horizontalMovementDirection * -0.03f, Space.World);
             if (joystickToControl.Horizontal > 0) pigSpriteController.ChengeTheSpriteFromPigController(Right);
             else if (joystickToControl.Horizontal < 0) pigSpriteController.ChengeTheSpriteFromPigController(Left);
         }
         else if (Mathf.Abs(joystickToControl.Horizontal) < Mathf.Abs(joystickToControl.Vertical))
         {
-            transform.Translate(new Vector2(0, joystickToControl.Vertical * 0.1f), Space.World);
+            //transform.Translate(new Vector2(0, joystickToControl.Vertical * 0.1f), Space.World);
+            if (joystickToControl.Vertical > 0)
+            {
+                transform.Translate(verticalMovementDirection * 0.03f, Space.World);
+            }
+            else if (joystickToControl.Vertical < 0) transform.Translate(verticalMovementDirection * -0.03f, Space.World);
             if (joystickToControl.Vertical > 0) pigSpriteController.ChengeTheSpriteFromPigController(Up);
             else if (joystickToControl.Vertical < 0) pigSpriteController.ChengeTheSpriteFromPigController(Down);
         }
