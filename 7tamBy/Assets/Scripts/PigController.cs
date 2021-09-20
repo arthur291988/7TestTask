@@ -14,9 +14,65 @@ public class PigController : MonoBehaviour
     private string Up = "Up";
     private string Down = "Down";
 
+    private const float baseTurnPointX = -9.8f;
+    private const float baseTurnPointY = -4.2f;
+    private const float baseXDistance = 2.2f;
+    private const float baseYDistance = 1.9f;
+
+    public GameObject testSquare;
+
+    private List<Vector2> turnPoints;
+
+    private Vector2 verticalMovementDirection;
+    private Vector2 horizontalMovementDirection;
+
+    private void populatingTheListOfTurnPoints() {
+        float XangleShift = 0.4f; //используется для сдвига по X при переходе на уровень выше
+        float Ypoint = 0;
+        float Xpoint = 0;
+        for (int i=0;i<5;i++)
+        {
+            Xpoint = baseTurnPointX;
+            if (i == 0)
+            {
+                Ypoint = baseTurnPointY;
+            }
+            else
+            {
+                Ypoint = turnPoints[turnPoints.Count - 1].y + baseYDistance;
+            }
+            for (int j = 0; j < 9; j++) {
+                if (j == 0 && i == 0) turnPoints.Add(new Vector2(baseTurnPointX, baseTurnPointY));
+                else if (j == 0)
+                {
+                    Xpoint += XangleShift;
+                    turnPoints.Add(new Vector2(Xpoint, Ypoint));
+                    XangleShift += 0.4f;
+                }
+                else
+                {
+                    turnPoints.Add(new Vector2(Xpoint + baseXDistance, Ypoint));
+                    Xpoint += baseXDistance;
+                }
+            }
+        }
+
+        //foreach (Vector2 v in turnPoints) {
+        //    Instantiate(testSquare, new Vector3 (v.x,v.y,0),Quaternion.identity);
+        //}
+    }
+
+    private void assignUpAndDownMoveVectors() {
+        horizontalMovementDirection = turnPoints[1] - turnPoints[0];
+        verticalMovementDirection = turnPoints[9] - turnPoints[0];
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        turnPoints = new List<Vector2>();
+        populatingTheListOfTurnPoints();
+        assignUpAndDownMoveVectors();
         pigSpriteController =GetComponent<SpriteRendererController>();
     }
 
