@@ -11,7 +11,7 @@ public class SpriteRendererController : MonoBehaviour
     [SerializeField]
     private SpriteAtlas spriteAtlas;
 
-    private SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     private string lastSprite;
 
     private string Left = "Left";
