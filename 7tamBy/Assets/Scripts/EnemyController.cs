@@ -13,6 +13,8 @@ public class EnemyController : MonoBehaviour
     private const float baseYDistance = 1.9f;
     private const float gapOfTurnPoint = 0.2f;
 
+    private SpriteRenderer enemySpriteRenderer;
+
     private List<Vector2> turnPoints;
     private List<Vector2> XBorderPoints;
     private List<Vector2> YBorderPoints;
@@ -27,9 +29,12 @@ public class EnemyController : MonoBehaviour
     private Vector2 nextPoint;
     private int indexOfCurrentPoint;
 
-    private const float moveSpeed = 0.03f;
+    private float moveSpeed = 0.03f;
+    private bool isAngry;
 
     public GameObject testSquare;
+
+    private Transform pigTransform;
     private void populatingTheListOfTurnPointsAndBorderPoints()
     {
         float XangleShift = XShiftGap; //используется для сдвига по X при переходе на уровень выше
@@ -186,13 +191,42 @@ public class EnemyController : MonoBehaviour
         nextPointsList.Clear();
     }
 
+    private void assigningOrderInLyerToEnemy()
+    {
+        if (enemyTransform.position.y < -3.1f) enemySpriteRenderer.sortingOrder = 8;
+        else if (enemyTransform.position.y < -1.2f) enemySpriteRenderer.sortingOrder = 6;
+        else if (enemyTransform.position.y < 0.7f) enemySpriteRenderer.sortingOrder = 4;
+        else if (enemyTransform.position.y < 2.6f) enemySpriteRenderer.sortingOrder = 2;
+        else if (enemyTransform.position.y > 2.6f) enemySpriteRenderer.sortingOrder = 0;
+    }
+
+    IEnumerator angryModeController() {
+        isAngry = true;
+        enemySpriteRenderer.color = Color.red;
+        moveSpeed = 0.06f;
+        yield return new WaitForSeconds(4);
+        enemySpriteRenderer.color = Color.white;
+        moveSpeed = 0.03f;
+        isAngry = false;
+
+    }
+
+    public IEnumerator frozenTime()
+    {
+        yield return new WaitForSeconds(5);
+        this.enabled = true;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        isAngry = false;
+        pigTransform = FindObjectOfType<PigController>().transform;
         turnPoints = new List<Vector2>();
         YBorderPoints = new List<Vector2>();
         XBorderPoints = new List<Vector2>();
         nextPointsList = new List<Vector2>();
+        enemySpriteRenderer = GetComponent<SpriteRenderer>();
         enemyTransform = transform;
         populatingTheListOfTurnPointsAndBorderPoints();
         currentPoint = turnPoints[Random.Range(0, turnPoints.Count)];
@@ -201,11 +235,14 @@ public class EnemyController : MonoBehaviour
         enemyMoveController();
     }
 
-    // Update is called once per frame
-    //void Update()
-    //{
-        
-    //}
+    //Update is called once per frame
+    void Update()
+    {
+        assigningOrderInLyerToEnemy();
+        if ((pigTransform.position - enemyTransform.position).sqrMagnitude < 4 && !isAngry) {
+            StartCoroutine(angryModeController());
+        }
+    }
 
     private void FixedUpdate()
     {

@@ -21,14 +21,15 @@ public class PigController : MonoBehaviour
     private const float baseYDistance = 1.9f;
     private const float gapOfTurnPoint = 0.2f;
 
-    public GameObject testSquare;
+    //public GameObject testSquare;
 
     private List<Vector2> turnPoints;
 
     private Vector2 verticalMovementDirection;
     private Vector2 horizontalMovementDirection;
 
-    private Transform pigTransform;
+    [HideInInspector]
+    public Transform pigTransform;
 
     private bool movingHorizontal;
 
@@ -175,121 +176,25 @@ public class PigController : MonoBehaviour
             {
                 return true;
             }
-            //if (pigSpriteController.spriteRenderer.sortingOrder == 8)
-            //{
-            //    if (pigTransform.position.y < 3.8f)
-            //    {
-            //        return true;
-            //    }
-            //}
-            //else if (pigSpriteController.spriteRenderer.sortingOrder == 6)
-            //{
-            //    if (pigTransform.position.y < 3.8f )
-            //    {
-            //        return true;
-            //    }
-            //}
-            //else if (pigSpriteController.spriteRenderer.sortingOrder == 4)
-            //{
-            //    if (pigTransform.position.y < 3.8f )
-            //    {
-            //        return true;
-            //    }
-            //}
-            //else if (pigSpriteController.spriteRenderer.sortingOrder == 2)
-            //{
-            //    if (pigTransform.position.y < 3.8f)
-            //    {
-            //        return true;
-            //    }
-            //}
-            //else if (pigSpriteController.spriteRenderer.sortingOrder == 0)
-            //{
-            //    if (pigTransform.position.y < 3.8f)
-            //    {
-            //        return true;
-            //    }
-            //}
+            
         }
         if (!horizontal && !rightOrUp)
         {
-            if (pigTransform.position.y > -4.1f)
+            if (pigTransform.position.y > -4.2f)
             {
                 return true;
             }
-            //    if (pigSpriteController.spriteRenderer.sortingOrder == 8)
-            //    {
-            //        if (pigTransform.position.y > -4.1f)
-            //        {
-            //            return true;
-            //        }
-            //    }
-            //    else if (pigSpriteController.spriteRenderer.sortingOrder == 6)
-            //    {
-            //        if (pigTransform.position.y > -4.1f)
-            //        {
-            //            return true;
-            //        }
-            //    }
-            //    else if (pigSpriteController.spriteRenderer.sortingOrder == 4)
-            //    {
-            //        if ( pigTransform.position.y > -4.1f)
-            //        {
-            //            return true;
-            //        }
-            //    }
-            //    else if (pigSpriteController.spriteRenderer.sortingOrder == 2)
-            //    {
-            //        if (pigTransform.position.y > -4.1f)
-            //        {
-            //            return true;
-            //        }
-            //    }
-            //    else if (pigSpriteController.spriteRenderer.sortingOrder == 0)
-            //    {
-            //        if (pigTransform.position.y > -4.1f)
-            //        {
-            //            return true;
-            //        }
-            //    }
+            
         }
-        //if (pigSpriteController.spriteRenderer.sortingOrder == 8)
-        //{
-        //    if (pigTransform.position.x < 8f && pigTransform.position.x > -9.5f && pigTransform.position.y < 3.8f && pigTransform.position.y > -4.1f)
-        //    {
-        //        return true;
-        //    }
-        //}
-        //else if (pigSpriteController.spriteRenderer.sortingOrder == 6)
-        //{
-        //    if (pigTransform.position.x < 8.3f && pigTransform.position.x > -9.3f && pigTransform.position.y < 3.8f && pigTransform.position.y > -4.1f)
-        //    {
-        //        return true;
-        //    }
-        //}
-        //else if (pigSpriteController.spriteRenderer.sortingOrder == 4)
-        //{
-        //    if (pigTransform.position.x < 8.5f && pigTransform.position.x > -8.7f && pigTransform.position.y < 3.8f && pigTransform.position.y > -4.1f)
-        //    {
-        //        return true;
-        //    }
-        //}
-        //else if (pigSpriteController.spriteRenderer.sortingOrder == 2)
-        //{
-        //    if (pigTransform.position.x < 8.6f && pigTransform.position.x > -8.3f && pigTransform.position.y < 3.8f && pigTransform.position.y > -4.1f)
-        //    {
-        //        return true;
-        //    }
-        //}
-        //else if (pigSpriteController.spriteRenderer.sortingOrder == 0)
-        //{
-        //    if (pigTransform.position.x < 8.9f && pigTransform.position.x > -8f && pigTransform.position.y < 3.8f && pigTransform.position.y > -4.1f)
-        //    {
-        //        return true;
-        //    }
-        //}
+        
         return false;
     }
+
+    public IEnumerator frozenTime() {
+        yield return new WaitForSeconds(5);
+        this.enabled = true;
+    }
+
 
     // Start is called before the first frame update
     void Start()
@@ -308,23 +213,13 @@ public class PigController : MonoBehaviour
         assigningOrderInLyerToPig(); 
         if (!movingHorizontal && Mathf.Abs(joystickToControl.Horizontal) > Mathf.Abs(joystickToControl.Vertical) && checkIfTurnIsAvailable())
         {
-            //transform.Translate(new Vector2(joystickToControl.Horizontal * 0.1f, 0), Space.World);
-            //if (joystickToControl.Horizontal > 0) {
-            //    transform.Translate(horizontalMovementDirection * 0.03f, Space.World);
-            //}
-            //else if (joystickToControl.Horizontal < 0) transform.Translate(horizontalMovementDirection * -0.03f, Space.World);
+           
             movingHorizontal = true;
             if (joystickToControl.Horizontal > 0) pigSpriteController.ChengeTheSpriteFromPigController(Right);
             else if (joystickToControl.Horizontal < 0) pigSpriteController.ChengeTheSpriteFromPigController(Left);
         }
         else if (movingHorizontal && Mathf.Abs(joystickToControl.Horizontal) < Mathf.Abs(joystickToControl.Vertical) && checkIfTurnIsAvailable())
         {
-            //transform.Translate(new Vector2(0, joystickToControl.Vertical * 0.1f), Space.World);
-            //if (joystickToControl.Vertical > 0)
-            //{
-            //    transform.Translate(verticalMovementDirection * 0.03f, Space.World);
-            //}
-            //else if (joystickToControl.Vertical < 0) transform.Translate(verticalMovementDirection * -0.03f, Space.World);
 
             movingHorizontal = false;
             if (joystickToControl.Vertical > 0) pigSpriteController.ChengeTheSpriteFromPigController(Up);
