@@ -4,35 +4,46 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    Transform enemyTransform;
+    [HideInInspector]
+    public Transform enemyTransform;
 
     private const float baseTurnPointX = -9.6f;//-9.8f;
     private const float baseTurnPointY = -4.2f;
     private const float XShiftGap = 0.3f;
     private const float baseXDistance = 2.2f;
     private const float baseYDistance = 1.9f;
-    private const float gapOfTurnPoint = 0.2f;
+    private const float frozenTimeFloat = 9;
 
     private SpriteRenderer enemySpriteRenderer;
 
-    private List<Vector2> turnPoints;
+    [HideInInspector]
+    public List<Vector2> turnPoints;
     private List<Vector2> XBorderPoints;
     private List<Vector2> YBorderPoints;
 
     private List<Vector2> nextPointsList;
 
-    private Vector2 verticalMovementDirection;
-    private Vector2 horizontalMovementDirection;
-
     private Vector2 previousPoint;
-    private Vector2 currentPoint;
-    private Vector2 nextPoint;
+    [HideInInspector]
+    public Vector2 currentPoint;
+    [HideInInspector]
+    public Vector2 nextPoint;
     private int indexOfCurrentPoint;
+
+    [SerializeField]
+    private GameController gameController;
+
+    [HideInInspector]
+    public bool isFarmer;
+    [HideInInspector]
+    public bool isFrozen;
+
+    [HideInInspector]
+    public SpriteRendererController enemySpriteController;
 
     private float moveSpeed = 0.03f;
     private bool isAngry;
-
-    public GameObject testSquare;
+    private string moveDirection;
 
     private Transform pigTransform;
     private void populatingTheListOfTurnPointsAndBorderPoints()
@@ -69,7 +80,7 @@ public class EnemyController : MonoBehaviour
                 else
                 {
                     turnPoints.Add(new Vector2(Xpoint + baseXDistance, Ypoint));
-                    if (i==0||i==4) YBorderPoints.Add(new Vector2(Xpoint + baseXDistance, Ypoint));
+                    if (i == 0 || i == 4) YBorderPoints.Add(new Vector2(Xpoint + baseXDistance, Ypoint));
                     Xpoint += baseXDistance;
                 }
 
@@ -79,18 +90,6 @@ public class EnemyController : MonoBehaviour
                 }
             }
         }
-        //foreach (Vector2 v in YBorderPoints)
-        //{
-        //    Instantiate(testSquare, new Vector3(v.x, v.y, 0), Quaternion.identity);
-        //}
-        //foreach (Vector2 v in XBorderPoints)
-        //{
-        //    Instantiate(testSquare, new Vector3(v.x, v.y, 0), Quaternion.identity);
-        //}
-        //foreach (Vector2 v in turnPoints)
-        //{
-        //    Instantiate(testSquare, new Vector3(v.x, v.y, 0), Quaternion.identity);
-        //}
     }
     private bool checkIfEnemyStaysAtXBorder(Vector2 currentPos)
     {
@@ -107,13 +106,9 @@ public class EnemyController : MonoBehaviour
         }
         return false;
     }
-    private void assignUpAndDownMoveVectors()
-    {
-        horizontalMovementDirection = turnPoints[1] - turnPoints[0];
-        verticalMovementDirection = turnPoints[9] - turnPoints[0];
-    }
 
-    
+    [SerializeField]
+    AudioSource enemySound;
 
     private void populateRandomeNextMovePoints() {
         if (checkIfEnemyStaysAtXBorder(currentPoint) && checkIfEnemyStaysAtYBorder(currentPoint)) {
@@ -177,16 +172,26 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void enemyMoveController()
+    private string enemyMoveDirection(Vector2 currentPoint, Vector2 nextPoint) {
+        if (currentPoint.x + 1 < nextPoint.x) moveDirection = "Right";
+        else if (currentPoint.x + 1 > nextPoint.x) moveDirection = "Left";
+        if (currentPoint.y < nextPoint.y) moveDirection = "Up";
+        else if (currentPoint.y > nextPoint.y) moveDirection = "Down";
+        return moveDirection;
+    }
+
+    public void enemyMoveController()
     {
         populateRandomeNextMovePoints();
         nextPoint = nextPointsList[Random.Range(0, nextPointsList.Count)];
-        if (previousPoint == nextPoint && Random.Range(0,3)>0)
+        if (previousPoint == nextPoint && Random.Range(0, 3) > 0)
         {
             nextPointsList.Clear();
             enemyMoveController();
             return;
         }
+        if (isAngry) enemySpriteController.ChengeTheSpriteFromEnemyController(enemyMoveDirection(currentPoint, nextPoint) + "Angry");
+        else enemySpriteController.ChengeTheSpriteFromEnemyController(enemyMoveDirection(currentPoint,nextPoint));
         previousPoint = currentPoint;
         nextPointsList.Clear();
     }
@@ -202,24 +207,57 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator angryModeController() {
         isAngry = true;
-        enemySpriteRenderer.color = Color.red;
         moveSpeed = 0.06f;
+        enemySound.Play();
+        enemySpriteController.ChengeTheSpriteFromEnemyController(enemyMoveDirection(currentPoint, nextPoint) + "Angry");
         yield return new WaitForSeconds(4);
-        enemySpriteRenderer.color = Color.white;
         moveSpeed = 0.03f;
         isAngry = false;
 
     }
 
-    public IEnumerator frozenTime()
+    public void invokeFrozenTime()
     {
-        yield return new WaitForSeconds(5);
-        this.enabled = true;
+        if (isFarmer)
+        {
+            gameController.FarmerIsFrozen = true;
+            isFrozen = true;
+            enemySpriteController.ChengeTheSpriteFromEnemyController(enemyMoveDirection(currentPoint, nextPoint) + "Dirty");
+            Invoke("frozenTime", frozenTimeFloat);
+        }
+        else
+        {
+            Invoke("frozenTime", frozenTimeFloat);
+            gameController.DogIsFrozen = true;
+            isFrozen = true;
+            enemySpriteController.ChengeTheSpriteFromEnemyController(enemyMoveDirection(currentPoint, nextPoint) + "Dirty");
+        }
     }
+
+    private void frozenTime()
+    {
+        this.enabled = true;
+        if (isFarmer) gameController.FarmerIsFrozen = false;
+        else gameController.DogIsFrozen = false;
+        isFrozen = false;
+        enemySpriteController.ChengeTheSpriteFromEnemyController(enemyMoveDirection(currentPoint, nextPoint));
+    }
+
+    private void OnDisable()
+    {
+        //enemySpriteRenderer.color = Color.white;
+        moveSpeed = 0.03f;
+        isAngry = false;
+    }
+
 
     // Start is called before the first frame update
     void Start()
     {
+        isFrozen = false;
+        isFarmer = name.Contains("Farmer");
+        enemySpriteController = GetComponent<SpriteRendererController>();
+        moveDirection = "Left";
         isAngry = false;
         pigTransform = FindObjectOfType<PigController>().transform;
         turnPoints = new List<Vector2>();
@@ -231,7 +269,6 @@ public class EnemyController : MonoBehaviour
         populatingTheListOfTurnPointsAndBorderPoints();
         currentPoint = turnPoints[Random.Range(0, turnPoints.Count)];
         enemyTransform.position = currentPoint;
-        //assignUpAndDownMoveVectors();
         enemyMoveController();
     }
 

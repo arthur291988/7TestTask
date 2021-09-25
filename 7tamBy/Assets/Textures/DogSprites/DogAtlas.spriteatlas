@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DogAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 512
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: abfb4776a522fd246964894ba3189856, type: 3}
+    - {fileID: 102900000, guid: 843198de5a7cba34bb4d089eb1b64f83, type: 3}
+    - {fileID: 102900000, guid: 241ba027a73978a49bb2bce7e318fda2, type: 3}
+    totalSpriteSurfaceArea: 2273217
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: c13f00d0c62b888498d04e0f5ddf1917, type: 3}
+  - {fileID: 21300000, guid: a77b78d0dbaadcc4f8d959b4b6de6dde, type: 3}
+  - {fileID: 21300000, guid: 283eea21f77281c4bbe34be3bb4a861b, type: 3}
+  - {fileID: 21300000, guid: 8728d5a3ca415a24ba7d063563727d73, type: 3}
+  - {fileID: 21300000, guid: 49c5e3b55dedc5c4ab409c59659216f7, type: 3}
+  - {fileID: 21300000, guid: d8e41fb617900dd42b475f51b1f93006, type: 3}
+  - {fileID: 21300000, guid: fcbdb48895465e0498fef084b05d5c92, type: 3}
+  - {fileID: 21300000, guid: b588114964021a149afba59aa6d35048, type: 3}
+  - {fileID: 21300000, guid: b41f145a679b5394780e68e3fb8d1c89, type: 3}
+  - {fileID: 21300000, guid: 2668100b47b5df148a5cdcf8478801de, type: 3}
+  - {fileID: 21300000, guid: d2776f1c19f0ecf42b23bbe6c00775b1, type: 3}
+  - {fileID: 21300000, guid: a310aa7e4dd1d8a438a96a72232834bc, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - UpDirty
+  - Left
+  - Right
+  - LeftAngry
+  - DownDirty
+  - Up
+  - Down
+  - RightDirty
+  - RightAngry
+  - UpAngry
+  - DownAngry
+  - LeftDirty
+  m_RenderDataMap: {}
+  m_Tag: DogAtlas
+  m_IsVariant: 0

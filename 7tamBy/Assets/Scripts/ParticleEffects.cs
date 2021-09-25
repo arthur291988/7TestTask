@@ -5,13 +5,8 @@ public class ParticleEffects : MonoBehaviour
 {
     ParticleSystem effectOfObject;
     ParticleSystem effectOfObjectChild;
-
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    effectOfObject = GetComponent<ParticleSystem>();
-    //    effectOfObjectChild = GetComponentInChildren<ParticleSystem>();
-    //}
+    [SerializeField]
+    AudioSource bombSound;
 
     private void Awake()
     {
@@ -23,6 +18,8 @@ public class ParticleEffects : MonoBehaviour
     {
         effectOfObject.Play();
         effectOfObjectChild.Play();
+        bombSound.Play();
+        StartCoroutine(turnOffTheObject());
     }
 
     private IEnumerator turnOffTheObject() {

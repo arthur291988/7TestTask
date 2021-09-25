@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
 
 public class BombButton : MonoBehaviour
 {
     [SerializeField]
     private GameObject [] bomb;
+    [SerializeField]
+    private AudioSource bombSet;
     private Button buttonUI;
     private float reloadTime;
     private Transform pigTransform;
@@ -17,9 +17,10 @@ public class BombButton : MonoBehaviour
         {
             if (!bomb[i].activeInHierarchy)
             {
+                bombSet.Play();
                 bomb[i].transform.position = pigTransform.position;
                 bomb[i].SetActive(true);
-                reloadTime = 5f;
+                reloadTime = 3f;
                 buttonUI.interactable = false;
                 return;
             }

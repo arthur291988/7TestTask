@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BombScript : MonoBehaviour
 {
     private float bombActiveTime;
+    private const float bombTime = 10;
     private Collider2D ColliderOfBomb;
     private SpriteRenderer bombSpriteRenderer;
     private Transform bombTransform;
@@ -13,14 +13,12 @@ public class BombScript : MonoBehaviour
     private GameObject burstEffect;
     [SerializeField]
     private GameObject fadeEffect;
+    [SerializeField]
+    private GameController gameController;
 
     PigController pigController;
     EnemyController enemyController;
 
-    //Start is called before the first frame update
-    //void Start()
-    //{
-    //}
 
     private void Awake()
     {
@@ -51,32 +49,41 @@ public class BombScript : MonoBehaviour
         ColliderOfBomb.enabled = false;
         assigningOrderInLyerToBomb();
         StartCoroutine(triggerOfBomb());
-        bombActiveTime = 8f;
+        bombActiveTime = bombTime;
     }
 
     private void OnDisable()
     {
         bombSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
     }
-
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         burstEffect.transform.position = bombTransform.position;
         burstEffect.SetActive(true);
-        if (other.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            pigController = other.gameObject.GetComponent<PigController>();
-            StartCoroutine(pigController.frozenTime());
+            pigController = collision.gameObject.GetComponent<PigController>();
+            pigController.invokeFrozenTime();
             pigController.enabled = false;
         }
         else
         {
-            enemyController = other.gameObject.GetComponent<EnemyController>();
-            StartCoroutine(enemyController.frozenTime());
-            enemyController.enabled = false;
+            enemyController = collision.gameObject.GetComponent<EnemyController>();
+            if (enemyController.isFarmer) gameController.FarmerIsFrozen = true;
+            else gameController.DogIsFrozen = true;
+            if (gameController.DogIsFrozen && gameController.FarmerIsFrozen)
+            {
+                gameController.endOfGamePigWin(); //если оба врага заморожены бомбой то свинья выигрывает 
+            }
+            else
+            {
+                enemyController.invokeFrozenTime();
+                enemyController.enabled = false;
+            }
         }
-        Debug.Log("Heeeeey");
+        gameObject.SetActive(false);
     }
+
 
     // Update is called once per frame
     void Update()

@@ -1,4 +1,4 @@
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,9 +19,13 @@ public class PigController : MonoBehaviour
     private const float XShiftGap = 0.3f;
     private const float baseXDistance = 2.2f;
     private const float baseYDistance = 1.9f;
-    private const float gapOfTurnPoint = 0.2f;
+    private const float gapOfTurnPoint = 0.4f;
 
-    //public GameObject testSquare;
+    [SerializeField]
+    private GameController gameController;
+    [SerializeField]
+    private AudioSource pigWalk;
+
 
     private List<Vector2> turnPoints;
 
@@ -73,7 +77,7 @@ public class PigController : MonoBehaviour
     private bool checkIfTurnIsAvailable() {
         for (int i =0;i< turnPoints.Count;i++) {
             if (pigTransform.position.x < turnPoints[i].x + gapOfTurnPoint && pigTransform.position.x > turnPoints[i].x - gapOfTurnPoint 
-                && pigTransform.position.y < turnPoints[i].y + 0.1f && pigTransform.position.y > turnPoints[i].y - 0.1f) {
+                && pigTransform.position.y < turnPoints[i].y + gapOfTurnPoint && pigTransform.position.y > turnPoints[i].y - gapOfTurnPoint) {
                 return true;
             }
         }
@@ -190,9 +194,25 @@ public class PigController : MonoBehaviour
         return false;
     }
 
-    public IEnumerator frozenTime() {
-        yield return new WaitForSeconds(5);
+    public void invokeFrozenTime()
+    {
+        pigSpriteController.spriteRenderer.color = new Color(0.6f, 0.3f,0.1f,1);
+        Invoke("frozenTime", 5);
+    }
+
+    private void frozenTime()
+    {
         this.enabled = true;
+        pigSpriteController.spriteRenderer.color = Color.white;
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy") && !collision.gameObject.GetComponent<EnemyController>().isFrozen) {
+            gameController.endOfGamePigLose();
+            transform.position = turnPoints[Random.Range(0, turnPoints.Count)];
+        }
     }
 
 
@@ -213,10 +233,10 @@ public class PigController : MonoBehaviour
         assigningOrderInLyerToPig(); 
         if (!movingHorizontal && Mathf.Abs(joystickToControl.Horizontal) > Mathf.Abs(joystickToControl.Vertical) && checkIfTurnIsAvailable())
         {
-           
             movingHorizontal = true;
             if (joystickToControl.Horizontal > 0) pigSpriteController.ChengeTheSpriteFromPigController(Right);
             else if (joystickToControl.Horizontal < 0) pigSpriteController.ChengeTheSpriteFromPigController(Left);
+            if (Random.Range(0, 3) == 0) pigWalk.Play();
         }
         else if (movingHorizontal && Mathf.Abs(joystickToControl.Horizontal) < Mathf.Abs(joystickToControl.Vertical) && checkIfTurnIsAvailable())
         {
@@ -224,6 +244,7 @@ public class PigController : MonoBehaviour
             movingHorizontal = false;
             if (joystickToControl.Vertical > 0) pigSpriteController.ChengeTheSpriteFromPigController(Up);
             else if (joystickToControl.Vertical < 0) pigSpriteController.ChengeTheSpriteFromPigController(Down);
+            if (Random.Range(0, 3) == 0) pigWalk.Play();
         }
     }
 
